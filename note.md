@@ -1,9 +1,122 @@
+# 策略模式
+> 定义算法簇,分别封装起来，让他们之间可以相互替换。  
+此模式让算法的实现独立于使用算法的客户。
+
+## 设计原则
+> -  封装变化  
+> -  多用组合，少用继承
+> -  针对接口编程，不针对实现编程
+
+## 示例
+鸭子：鸭子的飞行和叫的行为进行封装，不同种类的鸭子采用不同的实现。
+
+    // 鸭子的抽象类
+    public abstract class Duck {
+
+	    FlyBehavior flyBehavior;
+	    QuackBehavior quackBehavior;
+
+    	public Duck() {
+	    }
+
+	    public void setFlyBehavior(FlyBehavior fb) {
+	    	flyBehavior = fb;
+    	}
+
+	    public void setQuackBehavior(QuackBehavior qb) {
+	    	quackBehavior = qb;
+	    }
+
+	    abstract void display();
+
+	    public void performFly() {
+	    	flyBehavior.fly();
+	    }
+
+	    public void performQuack() {
+    		quackBehavior.quack();
+	    }
+
+    	public void swim() {
+    		System.out.println("All ducks float, even decoys!");
+    	}
+    }
+
+
+```
+public interface FlyBehavior {
+	public void fly();
+}
+```
+```
+public class Quack implements QuackBehavior {
+	public void quack() {
+		System.out.println("Quack");
+	}
+}
+```
+```
+public class ModelDuck extends Duck {
+    // 在构造时指定具体的实现
+	public ModelDuck() {
+		flyBehavior = new FlyNoWay();
+		quackBehavior = new Quack();
+	}
+
+	public void display() {
+		System.out.println("I'm a model duck");
+	}
+}
+```
+
+# 观察者模式
+一个对象状态改变时，其他对象都会受到通知。
+
+## 示例
+
+```
+public interface Subject {
+	public void registerObserver(Observer o);
+	public void removeObserver(Observer o);
+	public void notifyObservers();
+}
+```
+
+```
+public interface Observer {
+	public void update(int value);
+}
+```
+
+可直接用jdk中的观察这模式
+```
+java.util.Observable
+java.util.Observer
+
+缺点：Observable是一个类，必须设计一个类继承它。关键方法被保护，无法组合到自己的对象。
+不能满足需求时自己设计。
+```
+
+#  装饰者模式
+动态的将责任附加到对象上，若要扩展功能，装饰者提供了比继承更有弹性的替代方案
+
+![装饰者模式](https://upload-images.jianshu.io/upload_images/3985563-a0d0ac0c5bdf5c93.png)
+
+## 示例：
+
+![java IO](https://img-blog.csdn.net/20150714211311360?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center)
+
+> InputStream是被包装的组件，FilterInputStream是一个抽象的装饰者.  
+> BufferedInputStream是一个具体的装饰者，它加入两种行为，利用缓冲输入改进性能, 用readline()方法（一次读一行）增强接口。  
+> LineNumberInputStream加上了计算行数的功能。
+
 # 单例模式
 3种写法：
 内部静态类
 双检查锁 
 枚举（最好的方式）
 [参考](https://www.jianshu.com/p/7053217b73cc)
+
 
 # 适配器模式
 > 将一个类的接口，转换成客户期望的另一个接口。
