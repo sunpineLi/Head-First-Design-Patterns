@@ -10,52 +10,51 @@
 ## 示例
 鸭子：鸭子的飞行和叫的行为进行封装，不同种类的鸭子采用不同的实现。
 
-    // 鸭子的抽象类
-    public abstract class Duck {
+```java
+// 鸭子的抽象类
+public abstract class Duck {
 
-	    FlyBehavior flyBehavior;
-	    QuackBehavior quackBehavior;
+    FlyBehavior flyBehavior;
+    QuackBehavior quackBehavior;
 
-    	public Duck() {
-	    }
-
-	    public void setFlyBehavior(FlyBehavior fb) {
-	    	flyBehavior = fb;
-    	}
-
-	    public void setQuackBehavior(QuackBehavior qb) {
-	    	quackBehavior = qb;
-	    }
-
-	    abstract void display();
-
-	    public void performFly() {
-	    	flyBehavior.fly();
-	    }
-
-	    public void performQuack() {
-    		quackBehavior.quack();
-	    }
-
-    	public void swim() {
-    		System.out.println("All ducks float, even decoys!");
-    	}
+    public Duck() {
     }
 
+    public void setFlyBehavior(FlyBehavior fb) {
+        flyBehavior = fb;
+    }
 
+    public void setQuackBehavior(QuackBehavior qb) {
+        quackBehavior = qb;
+    }
+
+    abstract void display();
+
+    public void performFly() {
+        flyBehavior.fly();
+    }
+
+    public void performQuack() {
+        quackBehavior.quack();
+    }
+
+    public void swim() {
+        System.out.println("All ducks float, even decoys!");
+    }
+}
 ```
+
+```java
 public interface FlyBehavior {
 	public void fly();
 }
 ```
-```
-public class Quack implements QuackBehavior {
-	public void quack() {
-		System.out.println("Quack");
-	}
+```java
+public interface QuackBehavior {
+	public void quack();
 }
 ```
-```
+```java
 public class ModelDuck extends Duck {
     // 在构造时指定具体的实现
 	public ModelDuck() {
@@ -74,7 +73,7 @@ public class ModelDuck extends Duck {
 
 ## 示例
 
-```
+```java
 public interface Subject {
 	public void registerObserver(Observer o);
 	public void removeObserver(Observer o);
@@ -82,9 +81,9 @@ public interface Subject {
 }
 ```
 
-```
+```java
 public interface Observer {
-	public void update(int value);
+	public void update(int value); 
 }
 ```
 
@@ -109,6 +108,138 @@ java.util.Observer
 > InputStream是被包装的组件，FilterInputStream是一个抽象的装饰者.  
 > BufferedInputStream是一个具体的装饰者，它加入两种行为，利用缓冲输入改进性能, 用readline()方法（一次读一行）增强接口。  
 > LineNumberInputStream加上了计算行数的功能。
+
+# 简单工厂模式
+又叫做静态工厂方法（Static Factory Method）模式，由一个工厂对象根据外界给定的信息,决定究竟应该创建哪个具体类的对象.
+
+## 示例：
+```java
+// 产品类
+abstract class Product{
+    public abstract void Show();
+}
+```
+
+```java
+//具体产品类A
+class  ProductA extends  Product{
+
+    @Override
+    public void Show() {
+        System.out.println("生产出了产品A");
+    }
+}
+
+//具体产品类B
+class  ProductB extends  Product{
+
+    @Override
+    public void Show() {
+        System.out.println("生产出了产品C");
+    }
+}
+```
+```java
+//工厂类
+class  Factory {
+    //工厂类控制生产哪种商品, 使用者只需要调用工厂类的静态方法就可以实现产品类的实例化。
+    public static Product Manufacture(String ProductName){
+        switch (ProductName){
+            case "A":
+                return new ProductA();
+
+            case "B":
+                return new ProductB();
+
+            default:
+                return null;
+        }
+    }
+}
+```
+
+## 要点
+> - 将创建实例的工作与使用实例的工作分开，使用者不必关心类对象如何创建，实现了解耦；  
+> - 工厂类违背了“开闭原则”，对系统的维护和扩展不利，在工厂方法模式中得到了一定的克服。
+
+# 工厂方法模式
+> 定义了一个创建对象的接口，子类决定实例化哪一个，把实例化推迟到了子类。
+[参考文档](https://www.jianshu.com/p/d0c444275827)
+
+## 示例
+
+```java
+// 抽象工厂类
+abstract class Factory{
+    public abstract Product Manufacture();
+}
+
+// 抽象产品类
+abstract class Product{
+    public abstract void Show();
+}
+
+//具体产品A类
+class  ProductA extends  Product{
+    @Override
+    public void Show() {
+        System.out.println("生产出了产品A");
+    }
+}
+
+//具体产品B类
+class  ProductB extends  Product{
+
+    @Override
+    public void Show() {
+        System.out.println("生产出了产品B");
+    }
+}
+
+//工厂A类 - 生产A类产品
+class  FactoryA extends Factory{
+    @Override
+    public Product Manufacture() {
+        return new ProductA();
+    }
+}
+
+//工厂B类 - 生产B类产品
+class  FactoryB extends Factory{
+    @Override
+    public Product Manufacture() {
+        return new ProductB();
+    }
+}
+
+//生产工作流程
+public class FactoryPattern {
+    public static void main(String[] args){
+        //客户要产品A
+        FactoryA mFactoryA = new FactoryA();
+        mFactoryA.Manufacture().Show();
+
+        //客户要产品B
+        FactoryB mFactoryB = new FactoryB();
+        mFactoryB.Manufacture().Show();
+    }
+}
+```
+## 要点
+> - 更符合开-闭原则, 新增一种产品时，只需要增加相应的具体产品类和相应的工厂子类即可。
+> - 每个具体工厂类只负责创建对应的产品
+> - 依赖倒置原则：依赖抽象，不要依赖具体类。
+
+# 抽象工厂模式
+> 提供一个接口，用来创建有相互关系的一组对象。
+
+## 示例：
+![抽象工厂模式](https://www.runoob.com/wp-content/uploads/2018/07/1530601916-7298-DP-AbstractFactory.png)
+
+##要点：
+> - 当一个产品族中的多个对象被设计成一起工作时，它能保证客户端始终只使用同一个产品族中的对象。
+> - 主要解决接口选择的问题。
+> - 对于新的产品族符合开-闭原则；对于新的产品种类不符合开-闭原则.
 
 # 单例模式
 3种写法：
